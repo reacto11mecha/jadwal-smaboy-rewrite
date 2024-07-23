@@ -1,0 +1,38 @@
+---
+import { z } from "zod";
+import { guruSpesifikValidator } from "@utils/schedule";
+
+type currentTeacher = z.infer<typeof guruSpesifikValidator>;
+
+interface Props {
+  individualTeacher: {
+    nama: string;
+    keterangan: string;
+    data: currentTeacher;
+  };
+}
+
+const { individualTeacher } = Astro.props;
+---
+
+<!-- Hapus class="hidden" dan bakalan keliatan -->
+<div class="space-y-2.5 mb-5" id=`guru-${individualTeacher.nama}`>
+  <p>Nama: {individualTeacher.nama} | Mapel: {individualTeacher.keterangan}</p>
+  <div class=`overflow-x-auto mb-5`>
+    <table class="table-auto w-full">
+      <thead
+        class="border-b bg-zinc-900 text-zinc-50 dark:bg-zinc-200 dark:text-zinc-900"
+      >
+        <tr>
+          <th scope="col" class="font-medium px-3 py-4 text-left">Jam Ke-</th>
+          <th scope="col" class="font-medium px-3 py-4 text-left">Senin</th>
+          <th scope="col" class="font-medium px-3 py-4 text-left">Selasa</th>
+          <th scope="col" class="font-medium px-3 py-4 text-left">Rabu</th>
+          <th scope="col" class="font-medium px-3 py-4 text-left">Kamis</th>
+          <th scope="col" class="font-medium px-3 py-4 text-left">Jumat</th>
+        </tr>
+      </thead>
+      <tbody> </tbody>
+    </table>
+  </div>
+</div>

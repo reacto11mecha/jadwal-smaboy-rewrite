@@ -33,13 +33,12 @@ const jamPelajaran = Array.from({ length: maxJamPelajaran }).map(
 );
 
 const flatData = individualClass.data.flatMap((d) => d);
-console.log({ flatData });
 ---
 
 <!-- Hapus class="hidden" dan bakalan keliatan -->
-<div class="hidden" id=`kelas_${individualClass.kelas}`>
+<div class="space-y-2.5 mb-5" id=`kelas_${individualClass.kelas}`>
   <p>Kelas {individualClass.kelas}</p>
-  <div class=`overflow-x-auto mb-5`>
+  <div class=`overflow-x-auto`>
     <table class="table-auto w-full">
       <thead
         class="border-b bg-zinc-900 text-zinc-50 dark:bg-zinc-200 dark:text-zinc-900"
@@ -56,26 +55,38 @@ console.log({ flatData });
       <tbody>
         {
           jamPelajaran.map((jam) => (
-            <tr class="border-b">
-              <td class="px-3 py-4 whitespace-nowrap font-medium">{jam}</td>
+            <>
+              <tr class="border-b">
+                <td class="px-3 py-4 whitespace-nowrap font-medium">{jam}</td>
 
-              {listHari.map((hari) => {
-                const currentTableData = flatData.find(
-                  (data) => data.hari === hari && data.jam === jam
-                );
-
-                if (!currentTableData)
-                  return (
-                    <td class="px-3 py-4 whitespace-nowrap font-medium">-</td>
+                {listHari.map((hari) => {
+                  const currentTableData = flatData.find(
+                    (data) => data.hari === hari && data.jam === jam
                   );
 
-                return (
-                  <td class="px-3 py-4 whitespace-nowrap font-medium">
-                    {currentTableData.keterangan}
+                  if (!currentTableData)
+                    return (
+                      <td class="px-3 py-4 whitespace-nowrap font-medium">-</td>
+                    );
+
+                  return (
+                    <td class="px-3 py-4 whitespace-nowrap">
+                      {currentTableData.keterangan}
+                    </td>
+                  );
+                })}
+              </tr>
+              {(jam === 4 || jam === 6) && (
+                <tr class="border-b">
+                  <td
+                    colspan="6"
+                    class="px-3 py-4 whitespace-nowrap font-medium text-center"
+                  >
+                    ISTIRAHAT
                   </td>
-                );
-              })}
-            </tr>
+                </tr>
+              )}
+            </>
           ))
         }
       </tbody>

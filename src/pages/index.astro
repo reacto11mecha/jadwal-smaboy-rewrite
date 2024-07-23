@@ -2,12 +2,22 @@
 import Layout from "@layouts/Layout.astro";
 
 import { IndexFooter } from "@components/IndexFooter";
-import ClassTable from "@components/class/Table.astro";
+import ClassTable from "@components/currentClass/Table.astro";
+import TeacherTable from "@components/teacher/Table.astro";
+
+import {
+  kelasInfoValidator,
+  kelasSpesifikValidator,
+  guruInfoValidator,
+  guruSpesifikValidator,
+} from "@utils/schedule";
+
+import rawInfoGuru from "@data/guru/info.json";
+const infoGuruSafe = await guruInfoValidator.parseAsync(rawInfoGuru);
 
 import rawInfoKelas from "@data/kelas/info.json";
-import { kelasInfoValidator, kelasSpesifikValidator } from "@utils/schedule";
-
 const infoKelasSafe = await kelasInfoValidator.parseAsync(rawInfoKelas);
+
 const allClass = await Promise.all(
   infoKelasSafe
     .flatMap((jenjang) => jenjang.kelas)
@@ -21,6 +31,24 @@ const allClass = await Promise.all(
       return {
         kelas,
         data: dataKelasSafe,
+      };
+    })
+);
+
+const allTeacher = await Promise.all(
+  infoGuruSafe
+    .filter((d) => d.index !== 1)
+    .map(async (guru) => {
+      const data = await import(`../data/guru/${guru.index}.json`).then(
+        (d) => d.default
+      );
+
+      const dataGuruSafe = await guruSpesifikValidator.parseAsync(data);
+
+      return {
+        nama: guru.nama,
+        keterangan: guru.keterangan,
+        data: dataGuruSafe,
       };
     })
 );
@@ -77,9 +105,28 @@ const allClass = await Promise.all(
           ))
         }
       </select>
+
+      <select
+        class="border rounded-lg bg-white dark:border-neutral-900 dark:border-sm dark:bg-neutral-900 w-full h-10 px-3"
+      >
+        <option value="">Pilih lokasi guru</option>
+        {
+          infoGuruSafe.map((guru) => (
+            <option
+              value={`guru-${guru.index}`}
+            >{`${guru.index}. ${guru.nama}`}</option>
+          ))
+        }
+      </select>
     </section>
 
-    <section id="guru"></section>
+    <section id="guru">
+      {
+        allTeacher.map((individualTeacher) => (
+          <TeacherTable individualTeacher={individualTeacher} />
+        ))
+      }
+    </section>
     <section id="murid">
       {
         allClass.map((individualClass) => (

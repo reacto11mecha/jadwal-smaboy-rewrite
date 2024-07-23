@@ -19,3 +19,22 @@ export const kelasSpesifikValidator = z.array(
     })
   )
 );
+
+export const guruInfoValidator = z.array(
+  z.object({
+    index: z.number(),
+    nama: z.string(),
+    keterangan: z.string(),
+  })
+);
+
+export const guruSpesifikValidator = z.array(
+  z.object({
+    index: z.number(),
+    nama: z.string(),
+    keterangan: z.string(),
+    kelas: z.string(),
+    hari: z.number(),
+    jam: z.number(),
+  })
+);

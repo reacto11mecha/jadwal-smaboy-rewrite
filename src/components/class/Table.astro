@@ -1,0 +1,83 @@
+---
+import { z } from "zod";
+import { kelasSpesifikValidator } from "@utils/schedule";
+
+type currentClass = z.infer<typeof kelasSpesifikValidator>;
+
+function getMaxLengthInArrays(listOfArray: currentClass) {
+  let maxLength = 0;
+
+  listOfArray.forEach((element) => {
+    if (element.length > maxLength) {
+      maxLength = element.length;
+    }
+  });
+
+  return maxLength;
+}
+
+interface Props {
+  individualClass: {
+    kelas: string;
+    data: currentClass;
+  };
+}
+
+const { individualClass } = Astro.props;
+
+const listHari = [1, 2, 3, 4, 5];
+
+const maxJamPelajaran = getMaxLengthInArrays(individualClass.data);
+const jamPelajaran = Array.from({ length: maxJamPelajaran }).map(
+  (_, idx) => idx + 1
+);
+
+const flatData = individualClass.data.flatMap((d) => d);
+console.log({ flatData });
+---
+
+<div>
+  <p>Kelas {individualClass.kelas}</p>
+  <div class=`overflow-x-auto mb-5` id=`kelas_${individualClass.kelas}`>
+    <table class="table-auto w-full">
+      <thead
+        class="border-b bg-zinc-900 text-zinc-50 dark:bg-zinc-200 dark:text-zinc-900"
+      >
+        <tr>
+          <th scope="col" class="font-medium px-3 py-4 text-left">Jam Ke-</th>
+          <th scope="col" class="font-medium px-3 py-4 text-left">Senin</th>
+          <th scope="col" class="font-medium px-3 py-4 text-left">Selasa</th>
+          <th scope="col" class="font-medium px-3 py-4 text-left">Rabu</th>
+          <th scope="col" class="font-medium px-3 py-4 text-left">Kamis</th>
+          <th scope="col" class="font-medium px-3 py-4 text-left">Jumat</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          jamPelajaran.map((jam) => (
+            <tr class="border-b">
+              <td class="px-3 py-4 whitespace-nowrap font-medium">{jam}</td>
+
+              {listHari.map((hari) => {
+                const currentTableData = flatData.find(
+                  (data) => data.hari === hari && data.jam === jam
+                );
+
+                if (!currentTableData)
+                  return (
+                    <td class="px-3 py-4 whitespace-nowrap font-medium">-</td>
+                  );
+
+                return (
+                  <td class="px-3 py-4 whitespace-nowrap font-medium">
+                    {currentTableData.keterangan}
+                  </td>
+                );
+              })}
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

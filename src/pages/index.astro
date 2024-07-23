@@ -2,11 +2,33 @@
 import Layout from "@layouts/Layout.astro";
 
 import { IndexFooter } from "@components/IndexFooter";
+import ClassTable from "@components/class/Table.astro";
+
+import rawInfoKelas from "@data/kelas/info.json";
+import { kelasInfoValidator, kelasSpesifikValidator } from "@utils/schedule";
+
+const infoKelasSafe = await kelasInfoValidator.parseAsync(rawInfoKelas);
+const allClass = await Promise.all(
+  infoKelasSafe
+    .flatMap((jenjang) => jenjang.kelas)
+    .map(async (kelas) => {
+      const data = await import(
+        `../data/kelas/${kelas.replace(".json", "")}.json`
+      ).then((d) => d.default);
+
+      const dataKelasSafe = await kelasSpesifikValidator.parseAsync(data);
+
+      return {
+        kelas,
+        data: dataKelasSafe,
+      };
+    })
+);
 ---
 
 <Layout
-  title="Daftar Jadwal Belajar dan Mengajar SMA Negeri 12 Kota Bekasi"
-  description="Daftar Jadwal Belajar dan Mengajar SMAN 12 Bekasi"
+  title="Jadwal Belajar dan Mengajar SMA Negeri 1 Boyolangu"
+  description="Lihat jadwal pelajaran seluruh kelas beserta nama guru yang mengajar."
 >
   <header
     class="pt-[1.8rem] w-full flex flex-col items-center gap-0.5 md:gap-3 justify-center"
@@ -18,7 +40,7 @@ import { IndexFooter } from "@components/IndexFooter";
     </h1>
     <div class="flex flex-col md:flex-row md:gap-2 items-center">
       <h2 class="scroll-m-20 text-xl lg:text-2xl tracking-tight">
-        SMA Negeri 12 Bekasi
+        SMA Negeri 1 Boyolangu
       </h2>
       <h2
         class="scroll-m-20 text-xl lg:text-2xl hidden md:block tracking-tight"
@@ -52,39 +74,16 @@ import { IndexFooter } from "@components/IndexFooter";
         <option value="student">Murid</option>
       </select>
     </section>
-    <section class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-      <a
-        class="rounded border dark:border-neutral-900 dark:border-sm dark:bg-neutral-900 font-lato text-lg p-5 text-center"
-        href="/teacher"
-      >
-        Guru
-      </a>
-      <a
-        class="rounded border dark:border-neutral-900 dark:border-sm dark:bg-neutral-900 font-lato text-lg p-5 text-center"
-        href="/student"
-      >
-        Murid
-      </a>
+
+    <section id="guru"></section>
+    <section id="murid">
+      {
+        allClass.map((individualClass) => (
+          <ClassTable individualClass={individualClass} />
+        ))
+      }
     </section>
   </main>
 
   <IndexFooter client:idle />
-
-  <script>
-    const select = document.querySelector("select") as HTMLSelectElement;
-    const favoritePosition = localStorage.getItem("favorite-position");
-
-    if (favoritePosition) {
-      select.value = favoritePosition;
-      document.location = `/${favoritePosition}`;
-    }
-
-    select.addEventListener("change", (e) => {
-      localStorage.setItem(
-        "favorite-position",
-        (e.target as HTMLSelectElement).value
-      );
-      document.location = `/${(e.target as HTMLSelectElement).value}`;
-    });
-  </script>
 </Layout>

@@ -13,6 +13,9 @@ interface Props {
 }
 
 const { individualTeacher } = Astro.props;
+
+const listHari = [1, 2, 3, 4, 5];
+const jamPelajaran = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 ---
 
 <!-- Hapus class="hidden" dan bakalan keliatan -->
@@ -32,7 +35,44 @@ const { individualTeacher } = Astro.props;
           <th scope="col" class="font-medium px-3 py-4 text-left">Jumat</th>
         </tr>
       </thead>
-      <tbody> </tbody>
+      <tbody>
+        {
+          jamPelajaran.map((jam) => (
+            <>
+              <tr class="border-b">
+                <td class="px-3 py-4 whitespace-nowrap font-medium">{jam}</td>
+
+                {listHari.map((hari) => {
+                  const currentTableData = individualTeacher.data.find(
+                    (data) => data.hari === hari && data.jam === jam
+                  );
+
+                  if (!currentTableData)
+                    return (
+                      <td class="px-3 py-4 whitespace-nowrap font-medium">-</td>
+                    );
+
+                  return (
+                    <td class="px-3 py-4 whitespace-nowrap">
+                      {currentTableData.kelas}
+                    </td>
+                  );
+                })}
+              </tr>
+              {(jam === 4 || jam === 6) && (
+                <tr class="border-b">
+                  <td
+                    colspan="6"
+                    class="px-3 py-4 whitespace-nowrap font-medium text-center"
+                  >
+                    ISTIRAHAT
+                  </td>
+                </tr>
+              )}
+            </>
+          ))
+        }
+      </tbody>
     </table>
   </div>
 </div>

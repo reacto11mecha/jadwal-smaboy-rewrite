@@ -36,8 +36,8 @@ const flatData = individualClass.data.flatMap((d) => d);
 console.log({ flatData });
 ---
 
-<!-- Tambahin class="hidden" dan bakalan ga keliatan -->
-<div id=`kelas_${individualClass.kelas}`>
+<!-- Hapus class="hidden" dan bakalan keliatan -->
+<div class="hidden" id=`kelas_${individualClass.kelas}`>
   <p>Kelas {individualClass.kelas}</p>
   <div class=`overflow-x-auto mb-5`>
     <table class="table-auto w-full">

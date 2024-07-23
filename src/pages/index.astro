@@ -54,24 +54,28 @@ const allClass = await Promise.all(
   </header>
 
   <main class="py-10 pb-20 px-5">
-    <section
-      class="pb-5 flex flex-col gap-3 lg:gap-0 md:flex-row justify-between"
-    >
-      <div>
-        <h4 class="font-poppins font-semibold text-xl lg:text-2xl">
-          Posisi saya
-        </h4>
-        <p class="font-lato text-lg lg:text-xl">
-          Pilih posisi sebagai guru atau siswa supaya otomatis terbuka opsi yang
-          sesuai.
-        </p>
-      </div>
+    <section class="pb-5 flex flex-col gap-3 justify-between">
       <select
-        class="border rounded bg-white dark:border-neutral-900 dark:border-sm dark:bg-neutral-900 w-full h-10 sm:h-10 md:h-auto md:w-32"
+        class="border rounded-lg bg-white dark:border-neutral-900 dark:border-sm dark:bg-neutral-900 w-full h-10 px-3"
       >
         <option value="">Pilih posisi</option>
         <option value="teacher">Guru</option>
         <option value="student">Murid</option>
+      </select>
+
+      <select
+        class="border rounded-lg bg-white dark:border-neutral-900 dark:border-sm dark:bg-neutral-900 w-full h-10 px-3"
+      >
+        <option value="">Pilih kelas</option>
+        {
+          infoKelasSafe.map((info) => (
+            <optgroup label={`Kelas ${info.jenjang}`}>
+              {info.kelas.map((k) => (
+                <option value={`kelas_${k}`}>{k}</option>
+              ))}
+            </optgroup>
+          ))
+        }
       </select>
     </section>
 
